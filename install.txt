@@ -28,6 +28,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 This plugin complies with all wordpress plugin development guidelines
 so the codex instructions for plugins can also be followed.
 
+REQUIREMENTS (that I know of):
+Wordpress 2.0.x
+
 INSTALLATION:
 1) unzip the archive you downloaded to a local folder.
 2) upload the just-unzip folder to the wp-content/plugins/ folder.  see the wordpress codex for more details on plugin installation.
