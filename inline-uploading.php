@@ -189,13 +189,18 @@ case 'save':
   $overrides = array('action'=>'save');
   
   $file = wp_handle_upload($_FILES['image'], $overrides);		//handle the upload
-  if ( 'application/zip' == $file['type'] ) {					//make sure we have a zip archive.
+  if ( 'application/zip' == $file['type'] ) {								//make sure we have a zip archive.
   	$files = just_unzip_handle_zip_upload($file);
+    if ( isset($_POST['just_unzip_attach_zip']) ) {					//if user checked the 'just_unzip_handle_zip_upload checkbox, then
+    	array_push($files, $file);														//attach the zip to the post as well.
+      print_r($files);
+      die();
+    }
   } else {
-    $files[0] = $file;											//we always want an array to iterate, even if its just one file upload
+    $files[0] = $file;																			//we always want an array to iterate, even if its just one file upload
   }
   
-  for ( $i = 0, $n = count($files); $i < $n; $i++ ) {			//iterate through files and attach them to the post
+  for ( $i = 0, $n = count($files); $i < $n; $i++ ) {				//iterate through files and attach them to the post
   	just_unzip_attach_to_post($files[$i]);
   }  //end iterate through files array
 
@@ -783,6 +788,10 @@ th {
 <tr>
 <th scope="row" align="right"><label for="upload"><?php _e('File:'); ?></label></th>
 <td><input type="file" id="upload" name="image" /></td>
+</tr>
+<tr>
+<th scope="row" align="right"><label for="just_unzip_attach_zip"><?php _e('Keep Zip:'); ?></label></th>
+<td><input type="checkbox" id="just_unzip_attach_zip" name="just_unzip_attach_zip" value="1" <?php _e(isset($just_unzip_attach_zip)?'checked="1"':''); ?>/></td>
 </tr>
 <tr>
 <th scope="row" align="right"><label for="title"><?php _e('Title:'); ?></label></th>
