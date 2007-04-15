@@ -3,7 +3,7 @@
 Plugin Name: Just Unzip
 Plugin URI: http://james.revillini.com/projects/just-unzip/
 Description: Just Unzip (LGPL Licensed) takes a zip file you upload from the "Write" page, unzips it, stores the zipped files in your upload folder, and associates the unzipped files with the current post.    Just Unzip makes use of the PclZip php library (LGPL Licensed).
-Version: 0.3
+Version: 0.2.2
 Author: James Revillini
 Author URI: http://james.revillini.com
 */
