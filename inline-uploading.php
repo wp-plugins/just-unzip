@@ -15,6 +15,10 @@ require_once('../../../wp-config.php');
 
 require_once('../../../wp-admin/admin.php');
 
+if (!function_exists('wp_check_filetype')) {
+	require_once('functions-compat.php');
+}
+
 header('Content-Type: text/html; charset=' . get_option('blog_charset'));
 
 if (!current_user_can('upload_files'))
@@ -108,61 +112,56 @@ function just_unzip_attach_to_post($file) {
   
 } // end function attach_to_post
 
-/**
- * just_unzip_handle_zip_upload
- * @param array $file array('file' => string, 'type' => string, 'url' => string) - it's what you get back from wp_handle_upload
+/*
+ * Just Unzip - a Wordpress Plugin to make uploading many files
+ * to a single post easy by uploading a zipped file.
+ * Copyright (C) 2006-2007  James Revillini
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
  *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+/**
+ * Unzip a file using the GPL PclZip library and return an array of file arrays which are ready to send to just_unzip_attach_to_post. This function is LGPL Licensed (license fois above).
+ * @param array $file array('file' => string, 'type' => string, 'url' => string) - it's what you get back from wp_handle_upload
+ * This array is typically created by using the wp_handle_upload function
  * $file['file'] is the physical path and filename of the uploaded file
  * $file['type'] is the mimetype of the file
  * $file['url'] is the full url to the file
- * This array is typically created by using the wp_handle_upload function
- * This function will unzip a file using the GPL PclZip library an returns
- * an array of file arrays which are ready to send to just_unzip_attach_to_post.
- * This function is LGPL Licensed (license follows).
  */
-/*
-Copyright (C) 2006  James Revillini
-
-This library is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either
-version 2.1 of the License, or (at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this library; if not, write to the Free Software
-Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-
-*/
-
 function just_unzip_handle_zip_upload ($file) {
 	global $mimes;
-  extract($file);												//make everything easier to grab
-  $files = just_unzip::unzip($file);							//unzip everything to the uploads dir
+	extract($file);												//make everything easier to grab
+	$files = just_unzip::unzip($file);							//unzip everything to the uploads dir
 	for ( $i = 0, $n = count($files); $i < $n; $i++ ) {				//iterate array of unzipped files
-    $files[$i]['file'] = str_replace(							//assign the full physical path
-    	basename($file),
-        $files[$i]['stored_filename'],
-        $file
-    );		
-    $files[$i]['url'] = str_replace(							//assign the full url
-    	basename($file),  
-        $files[$i]['stored_filename'],
-        $url
-    );															
-    $files[$i] = array_merge(									//assign extension and mime type
-    	$files[$i], 
-    	wp_check_filetype(
-    		$files[$i]['file'], 
-    		$mimes
-    	)
-    );
+		$files[$i]['file'] = str_replace(							//assign the full physical path
+			basename($file),
+			$files[$i]['stored_filename'],
+			$file
+		);		
+		$files[$i]['url'] = str_replace(							//assign the full url
+			basename($file),  
+			$files[$i]['stored_filename'],
+			$url
+		);															
+		$files[$i] = array_merge(									//assign extension and mime type
+			$files[$i], 
+			wp_check_filetype(
+				$files[$i]['file'], 
+				$mimes
+			)
+		);
 	}  //end iterate through files array
-  return $files;
+	return $files;
 }
 
 switch($action) {
